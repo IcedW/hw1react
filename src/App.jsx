@@ -8,12 +8,48 @@ const initialState = {
 };
 
 async function submitOrder(previousState, formData) {
-    // Simulate async request
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const name = formData.get("name").trim();
+    const phone = formData.get("phone").trim();
+    const address = formData.get("address").trim();
+    const delivery = formData.get("delivery");
+    const payment = formData.get("payment");
 
+    // Name
+    if (name.length < 3) {
+        return {
+            success: false,
+            message: "name must be at least 3 characters long.",
+        };
+    }
+    const phoneRegex = /^\+380\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+        return {
+            success: false,
+            message: "+380XXXXXXXXX.",
+        };
+    }
+    if (address.length < 5) {
+        return {
+            success: false,
+            message: "please enter a valid address.",
+        };
+    }
+    if (!delivery) {
+        return {
+            success: false,
+            message: "choose a delivery method.",
+        };
+    }
+    if (!payment) {
+        return {
+            success: false,
+            message: "choose a payment method.",
+        };
+    }
+    await new Promise(resolve => setTimeout(resolve, 1500));
     return {
         success: true,
-        message: `Order for ${formData.get("name")} has been submitted!`,
+        message: `Order for ${name} has been submitted`,
     };
 }
 
@@ -79,6 +115,7 @@ export default function Cart() {
                                 type="text"
                                 placeholder="Name, Surname"
                                 required
+                                minLength={3}
                             />
                         </div>
 
@@ -88,6 +125,8 @@ export default function Cart() {
                                 type="tel"
                                 placeholder="+380XXXXXXXXX"
                                 required
+                                pattern="^\+380\d{9}$"
+                                title="+380XXXXXXXXX"
                             />
                         </div>
 
@@ -129,6 +168,7 @@ export default function Cart() {
                                 type="text"
                                 placeholder="City, Street"
                                 required
+                                minLength={5}
                             />
                         </div>
                     </div>
